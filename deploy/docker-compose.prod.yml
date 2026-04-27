@@ -1,0 +1,80 @@
+services:
+  traefik:
+    image: traefik:v3.1
+    command:
+      - --configFile=/etc/traefik/traefik.yml
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --config /etc/cloudflared/config.yml run
+    depends_on:
+      - traefik
+    volumes:
+      - ./cloudflared/config.yml:/etc/cloudflared/config.yml:ro
+      - ${CF_TUNNEL_CREDENTIALS_FILE}:/etc/cloudflared/credentials.json:ro
+
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  server:
+    image: python:3.13-slim
+    working_dir: /app/server
+    command: sh -c "pip install -r requirements.txt && python run.py"
+    env_file:
+      - ../server/.env
+    environment:
+      MONGODB_URI: ${MONGODB_URI}
+      REDIS_URL: ${REDIS_URL}
+      SECRET_KEY: ${SECRET_KEY}
+      MAILGUN_DOMAIN: ${MAILGUN_DOMAIN}
+      MAILGUN_API_KEY: ${MAILGUN_API_KEY}
+      SENTRY_DSN: ${SENTRY_DSN}
+      SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE}
+    volumes:
+      - ../server:/app/server
+    depends_on:
+      - mongo
+      - redis
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sylo-api.rule=Host(`${API_HOST}`)
+      - traefik.http.routers.sylo-api.entrypoints=web
+      - traefik.http.routers.sylo-api.middlewares=sylo-security@file
+      - traefik.http.services.sylo-api.loadbalancer.server.port=5000
+
+  worker:
+    image: python:3.13-slim
+    working_dir: /app/server
+    command: sh -c "pip install -r requirements.txt && celery -A app.core.celery_app.celery_app worker --loglevel=info"
+    env_file:
+      - ../server/.env
+    environment:
+      MONGODB_URI: ${MONGODB_URI}
+      REDIS_URL: ${REDIS_URL}
+      SECRET_KEY: ${SECRET_KEY}
+      MAILGUN_DOMAIN: ${MAILGUN_DOMAIN}
+      MAILGUN_API_KEY: ${MAILGUN_API_KEY}
+      SENTRY_DSN: ${SENTRY_DSN}
+      SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE}
+    volumes:
+      - ../server:/app/server
+    depends_on:
+      - mongo
+      - redis
+
+volumes:
+  mongo_data:

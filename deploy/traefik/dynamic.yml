@@ -1,0 +1,10 @@
+http:
+  middlewares:
+    sylo-security:
+      headers:
+        frameDeny: true
+        browserXssFilter: true
+        contentTypeNosniff: true
+        referrerPolicy: no-referrer
+        customResponseHeaders:
+          X-Robots-Tag: noindex, nofollow

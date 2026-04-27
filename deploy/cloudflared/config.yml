@@ -1,0 +1,9 @@
+tunnel: ${CF_TUNNEL_ID}
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  - hostname: ${API_HOST}
+    service: http://traefik:80
+  - hostname: ${WEB_HOST}
+    service: http://traefik:80
+  - service: http_status:404

@@ -1,0 +1,59 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: sylo-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    container_name: sylo-redis
+    ports:
+      - "6379:6379"
+
+  server:
+    image: python:3.13-slim
+    container_name: sylo-server
+    working_dir: /app/server
+    command: sh -c "pip install -r requirements.txt && python run.py"
+    env_file:
+      - ./server/.env
+    volumes:
+      - ./server:/app/server
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+      - redis
+
+  worker:
+    image: python:3.13-slim
+    container_name: sylo-worker
+    working_dir: /app/server
+    command: sh -c "pip install -r requirements.txt && celery -A app.core.celery_app.celery_app worker --loglevel=info"
+    env_file:
+      - ./server/.env
+    volumes:
+      - ./server:/app/server
+    depends_on:
+      - redis
+      - mongo
+
+  # web:
+  #   image: node:22-alpine
+  #   container_name: sylo-web
+  #   working_dir: /app/web
+  #   command: sh -c "npm install && npm run dev"
+  #   environment:
+  #     NEXT_PUBLIC_API_BASE_URL: http://localhost:5000
+  #   volumes:
+  #     - ./web:/app/web
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - server
+
+volumes:
+  mongo_data:
