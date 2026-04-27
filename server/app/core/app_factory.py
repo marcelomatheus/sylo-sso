@@ -1,0 +1,97 @@
+from __future__ import annotations
+
+from asyncio.log import logger
+import traceback
+from uuid import uuid4
+
+from flask import Response, g
+from flask_cors import CORS
+from flask_openapi3 import Info, OpenAPI
+from mongoengine import connect
+from mongoengine.connection import ConnectionFailure, get_connection
+import traceback
+from app.core.config import get_settings
+from app.core.errors import register_error_handlers
+from app.core.logging import configure_logging
+from app.core.sentry import init_sentry
+from app.modules.external.routes import external_api
+from app.modules.internal.routes import internal_api
+from app.modules.oauth.routes import oauth_api
+from app.commands import seed_db
+
+
+def create_app() -> OpenAPI:
+    settings = get_settings()
+    info = Info(title=settings.api_title, version=settings.api_version, description=settings.api_description)
+    app = OpenAPI(
+        __name__,
+        info=info,
+        doc_prefix="/docs",
+        doc_url="/openapi.json",
+        validation_error_status=422,
+    )
+    app.config["SECRET_KEY"] = settings.secret_key
+    app.config["JSON_SORT_KEYS"] = False
+    CORS(
+        app,
+        resources={
+            r"/*": {
+                "origins": ["http://localhost:3000"], 
+                
+                "supports_credentials": True,
+                
+                "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+                
+                "expose_headers": ["Content-Type", "Authorization"]
+            }
+        }
+    )
+    configure_logging(app)
+    init_sentry()
+    
+    
+    
+    try:
+        get_connection(alias="default")
+    except ConnectionFailure:
+        connect(host=settings.mongodb_uri, alias="default", uuidRepresentation="standard")
+
+    @app.before_request
+    def assign_request_id() -> None:
+        g.request_id = uuid4().hex
+
+    @app.get("/health", doc_ui=False)
+    def health() -> tuple[dict, int]:
+        return {
+            "status": "ok",
+            "service": settings.app_name,
+            "environment": settings.app_env,
+        }, 200
+
+    @app.get("/health/dependencies", doc_ui=False)
+    def dependency_health() -> tuple[dict, int]:
+        return {"status": "ok", "dependencies": {"mongo": "configured", "redis": "configured"}}, 200
+
+    @app.get("/docs/scalar", doc_ui=False)
+    def scalar_docs() -> Response:
+        html = f"""<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{settings.api_title} - Scalar</title>
+  </head>
+  <body>
+    <script id="api-reference" data-url="/docs/openapi.json"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+  </body>
+</html>"""
+        return Response(html, mimetype="text/html")
+
+    app.register_api(internal_api, url_prefix="/api/internal/v1")
+    app.register_api(external_api, url_prefix="/api/external/v1")
+    app.register_api(oauth_api, url_prefix="/oauth/v1")
+
+    register_error_handlers(app)
+    app.cli.add_command(seed_db)
+    return app
