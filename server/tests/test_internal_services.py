@@ -4,7 +4,10 @@ import pytest
 
 from app.core.errors import ConflictError
 from app.models import MfaChallenge
-from app.modules.internal.service import ApiKeyService, MfaService, RoleBindingService, TenantService, UserService
+from app.modules.access.service import RoleBindingService
+from app.modules.applications.service import ApiKeyService
+from app.modules.tenants.service import TenantService
+from app.modules.users.service import MfaService, UserService
 
 
 def test_bootstrap_creates_first_tenant_admin_and_session():
@@ -97,7 +100,7 @@ def test_same_email_can_exist_in_different_tenants():
 
 
 def test_role_binding_can_be_created_and_updated():
-    from app.modules.internal.service import ClientAppService
+    from app.modules.applications.service import ClientAppService
 
     tenant = TenantService.create(
         {
@@ -146,7 +149,7 @@ def test_role_binding_can_be_created_and_updated():
 
 
 def test_api_key_can_rotate_secret():
-    from app.modules.internal.service import ClientAppService
+    from app.modules.applications.service import ClientAppService
 
     tenant = TenantService.create(
         {
@@ -241,7 +244,7 @@ def test_email_mfa_setup_and_verify(monkeypatch: pytest.MonkeyPatch):
     )
     from app.models import User
 
-    monkeypatch.setattr("app.modules.internal.service.generate_one_time_code", lambda length=6: "654321")
+    monkeypatch.setattr("app.modules.users.service.generate_one_time_code", lambda length=6: "654321")
     db_user = User.objects(id=user["id"]).first()
     setup = MfaService.setup(db_user, {"method": "EMAIL"})
 

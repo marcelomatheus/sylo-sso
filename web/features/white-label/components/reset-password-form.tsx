@@ -45,7 +45,7 @@ export function ResetPasswordForm({
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      await http.post("/api/external/v1/password/reset", {
+      await http.post("/api/v1/auth/external/password/reset", {
         tenant_slug: tenantSlug,
         token,
         new_password: values.password,

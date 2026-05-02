@@ -4,9 +4,11 @@ from datetime import UTC, datetime, timedelta
 
 from app.core.security import hash_secret
 from app.models import ClientApp, Consent, EmailVerificationToken, Tenant, User
-from app.modules.external.service import PublicAuthService
-from app.modules.internal.service import ClientAppService, ConsentService, TenantService, UserService
-from app.modules.oauth.service import OAuthService
+from app.modules.access.service import ConsentService
+from app.modules.applications.service import ClientAppService
+from app.modules.auth.service import OAuthService, PublicAuthService
+from app.modules.tenants.service import TenantService
+from app.modules.users.service import UserService
 
 
 def test_verify_email_marks_user_as_verified():

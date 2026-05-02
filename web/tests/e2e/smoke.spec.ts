@@ -8,8 +8,8 @@ test("landing page exposes the core product message", async ({ page }) => {
 
 test("docs page lists the integration endpoints", async ({ page }) => {
   await page.goto("/docs");
-  await expect(page.getByText("POST /oauth/v1/login", { exact: true })).toBeVisible();
-  await expect(page.getByText("POST /api/internal/v1/role-bindings", { exact: true })).toBeVisible();
+  await expect(page.getByText("POST /api/v1/auth/external/login", { exact: true })).toBeVisible();
+  await expect(page.getByText("POST /api/v1/access/internal/role-bindings", { exact: true })).toBeVisible();
 });
 
 test("admin area redirects unauthenticated users to login", async ({ page }) => {

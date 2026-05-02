@@ -1,18 +1,18 @@
 import { Card } from "@/ui/card";
 
 const steps = [
-  "Crie o tenant inicial em /onboarding ou via POST /api/internal/v1/bootstrap.",
-  "Autentique o administrador em /oauth/v1/login para obter access e refresh tokens.",
-  "Se quiser endurecer o acesso do painel, ative MFA por e-mail em /api/internal/v1/me/mfa/setup e valide o codigo em /verify.",
+  "Crie o tenant inicial em /onboarding ou via POST /api/v1/tenants/internal/bootstrap.",
+  "Autentique o administrador em /api/v1/auth/external/login para obter access e refresh tokens.",
+  "Se quiser endurecer o acesso do painel, ative MFA por e-mail em /api/v1/users/internal/me/mfa/setup e valide o codigo em /verify.",
   "Cadastre uma Client App e API keys no painel administrativo ou via rotas internas.",
   "Defina Role Bindings para usuarios MEMBER acessarem apenas as aplicacoes e scopes autorizados.",
-  "Use /oauth/v1/authorize para obter authorization code e /oauth/v1/token para trocar por access token.",
+  "Use /api/v1/auth/external/authorize para obter authorization code e /api/v1/auth/external/token para trocar por access token.",
   "Para usuarios finais, use as paginas white-label de login, cadastro, verificacao e reset de senha.",
-  "Proteja introspecao de token com API Key gerada em /api/internal/v1/api-keys.",
+  "Proteja introspecao de token com API Key gerada em /api/v1/applications/internal/api-keys.",
 ];
 
 const examples = {
-  authorize: `POST /oauth/v1/authorize
+  authorize: `POST /api/v1/auth/external/authorize
 {
   "tenant_slug": "acme",
   "client_id": "client_123",
@@ -23,7 +23,7 @@ const examples = {
   "consent_accepted": true,
   "mfa_code": "123456"
 }`,
-  register: `POST /api/external/v1/register
+  register: `POST /api/v1/auth/external/register
 {
   "tenant_slug": "acme",
   "client_id": "client_123",
@@ -35,7 +35,7 @@ const examples = {
   "scopes": ["openid"],
   "consent_accepted": true
 }`,
-  roleBinding: `POST /api/internal/v1/role-bindings
+  roleBinding: `POST /api/v1/access/internal/role-bindings
 {
   "tenant_id": "tenant_id",
   "user_id": "user_id",
@@ -64,17 +64,17 @@ export default function DocsPage() {
           <Card className="rounded-[1.75rem] p-6">
             <h2 className="text-lg font-semibold">Endpoints principais</h2>
             <ul className="mt-4 space-y-3 font-mono text-xs text-muted">
-              <li>POST /api/internal/v1/bootstrap</li>
-              <li>POST /oauth/v1/login</li>
-              <li>POST /oauth/v1/authorize</li>
-              <li>POST /oauth/v1/token</li>
-              <li>POST /api/internal/v1/me/mfa/setup</li>
-              <li>POST /api/internal/v1/me/mfa/verify</li>
-              <li>POST /api/internal/v1/role-bindings</li>
-              <li>POST /api/external/v1/register</li>
-              <li>POST /api/external/v1/email/verify</li>
-              <li>POST /api/external/v1/password/reset</li>
-              <li>POST /api/external/v1/tokens/introspect</li>
+              <li>POST /api/v1/tenants/internal/bootstrap</li>
+              <li>POST /api/v1/auth/external/login</li>
+              <li>POST /api/v1/auth/external/authorize</li>
+              <li>POST /api/v1/auth/external/token</li>
+              <li>POST /api/v1/users/internal/me/mfa/setup</li>
+              <li>POST /api/v1/users/internal/me/mfa/verify</li>
+              <li>POST /api/v1/access/internal/role-bindings</li>
+              <li>POST /api/v1/auth/external/register</li>
+              <li>POST /api/v1/auth/external/email/verify</li>
+              <li>POST /api/v1/auth/external/password/reset</li>
+              <li>POST /api/v1/auth/external/tokens/introspect</li>
               <li>GET /docs/openapi.json</li>
             </ul>
           </Card>

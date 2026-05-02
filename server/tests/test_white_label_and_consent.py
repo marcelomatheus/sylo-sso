@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from app import create_app
-from app.modules.internal.service import ClientAppService, TenantService, UserService
-from app.modules.oauth.service import OAuthService
+from app.modules.applications.service import ClientAppService
+from app.modules.auth.service import OAuthService
+from app.modules.tenants.service import TenantService
+from app.modules.users.service import UserService
 
 
 def test_authorize_requires_consent_when_tenant_demands_it():
@@ -72,7 +74,7 @@ def test_public_branding_endpoint_returns_tenant_branding():
 
     app = create_app()
     client = app.test_client()
-    response = client.get("/api/external/v1/tenants/brand-corp/branding")
+    response = client.get("/api/v1/tenants/external/branding/brand-corp")
 
     assert response.status_code == 200
     body = response.get_json()

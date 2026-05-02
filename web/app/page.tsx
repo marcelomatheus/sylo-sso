@@ -75,9 +75,9 @@ export default function HomePage() {
         <Card className="rounded-[2rem] p-6 sm:p-8">
           <p className="font-mono text-xs uppercase tracking-[0.22em] text-muted">Rotas iniciais</p>
           <ul className="mt-5 space-y-3 text-sm text-muted">
-            <li>`/api/internal/v1/bootstrap` para o primeiro admin.</li>
-            <li>`/oauth/v1/login`, `/authorize`, `/token`, `/revoke`.</li>
-            <li>`/api/external/v1/tokens/introspect` com API Key.</li>
+            <li>`/api/v1/tenants/internal/bootstrap` para o primeiro admin.</li>
+            <li>`/api/v1/auth/external/login`, `/authorize`, `/token`, `/revoke`.</li>
+            <li>`/api/v1/auth/external/tokens/introspect` com API Key.</li>
             <li>`/docs/openapi.json` e UI automática em `/docs/`.</li>
           </ul>
           <div className="mt-6">

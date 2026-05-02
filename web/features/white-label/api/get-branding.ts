@@ -16,7 +16,7 @@ export type TenantBrandingResponse = {
 };
 
 export async function getBranding(tenantSlug: string): Promise<TenantBrandingResponse | null> {
-  const response = await fetch(`${config.apiBaseUrl}/api/external/v1/tenants/${tenantSlug}/branding`, {
+  const response = await fetch(`${config.apiBaseUrl}/api/v1/tenants/external/branding/${tenantSlug}`, {
     next: { revalidate: 60 },
   });
   if (!response.ok) {

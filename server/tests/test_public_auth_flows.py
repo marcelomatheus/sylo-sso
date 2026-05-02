@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from app.core.security import hash_secret
 from app.models import ClientApp, EmailVerificationToken
-from app.modules.external.service import PublicAuthService
-from app.modules.internal.service import TenantService, UserService
+from app.modules.auth.service import PublicAuthService
+from app.modules.tenants.service import TenantService
+from app.modules.users.service import UserService
 from app.models import PasswordResetToken, User
 
 
@@ -134,7 +135,7 @@ def test_reset_password_updates_password_and_consumes_token():
 
 
 def test_public_registration_accepts_client_redirect_context():
-    from app.modules.internal.service import ClientAppService
+    from app.modules.applications.service import ClientAppService
 
     tenant = TenantService.create(
         {

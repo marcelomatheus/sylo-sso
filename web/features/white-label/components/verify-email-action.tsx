@@ -20,7 +20,7 @@ export function VerifyEmailAction({
   const handleVerify = async () => {
     setLoading(true);
     try {
-      const response = await http.post("/api/external/v1/email/verify", {
+      const response = await http.post("/api/v1/auth/external/email/verify", {
         tenant_slug: tenantSlug,
         token,
       });

@@ -65,7 +65,7 @@ export function OAuthLoginForm({
 
     try {
       if (clientId && redirectUri) {
-        const response = await http.post("/oauth/v1/authorize", {
+        const response = await http.post("/api/v1/auth/external/authorize", {
           tenant_slug: tenantSlug,
           client_id: clientId,
           redirect_uri: redirectUri,
@@ -81,7 +81,7 @@ export function OAuthLoginForm({
         return;
       }
 
-      const response = await http.post("/oauth/v1/login", {
+      const response = await http.post("/api/v1/auth/external/login", {
         tenant_slug: tenantSlug,
         email: values.email,
         password: values.password,

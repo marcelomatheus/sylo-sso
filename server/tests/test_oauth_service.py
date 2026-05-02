@@ -8,8 +8,11 @@ from app.core.security import _totp_code  # type: ignore[attr-defined]
 import pytest
 
 from app.models import MfaChallenge
-from app.modules.internal.service import ClientAppService, MfaService, RoleBindingService, TenantService, UserService
-from app.modules.oauth.service import OAuthService
+from app.modules.access.service import RoleBindingService
+from app.modules.applications.service import ClientAppService
+from app.modules.auth.service import OAuthService
+from app.modules.tenants.service import TenantService
+from app.modules.users.service import MfaService, UserService
 
 
 def test_authorization_code_pkce_exchange_flow():
@@ -197,11 +200,11 @@ def test_login_requires_email_mfa_and_accepts_code(monkeypatch: pytest.MonkeyPat
     from app.models import User
 
     db_user = User.objects(id=user["id"]).first()
-    monkeypatch.setattr("app.modules.internal.service.generate_one_time_code", lambda length=6: "111222")
+    monkeypatch.setattr("app.modules.users.service.generate_one_time_code", lambda length=6: "111222")
     MfaService.setup(db_user, {"method": "EMAIL"})
     MfaService.verify(db_user, {"code": "111222"})
 
-    monkeypatch.setattr("app.modules.oauth.service.generate_one_time_code", lambda length=6: "333444")
+    monkeypatch.setattr("app.modules.auth.service.generate_one_time_code", lambda length=6: "333444")
     try:
         OAuthService.login({"tenant_slug": tenant["slug"], "email": user["email"], "password": "Sup3rSecret!"})
         assert False, "expected email MFA to be required"

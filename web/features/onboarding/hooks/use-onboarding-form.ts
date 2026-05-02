@@ -36,7 +36,7 @@ export function useOnboardingForm() {
 
   const onSubmit = form.handleSubmit(async (values) => {
     try {
-      const response = await http.post("/api/internal/v1/bootstrap", {
+      const response = await http.post("/api/v1/tenants/internal/bootstrap", {
         tenant: {
           name: values.tenantName,
           slug: values.tenantSlug,

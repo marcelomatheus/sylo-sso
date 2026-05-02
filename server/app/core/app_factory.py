@@ -14,10 +14,14 @@ from app.core.config import get_settings
 from app.core.errors import register_error_handlers
 from app.core.logging import configure_logging
 from app.core.sentry import init_sentry
-from app.modules.external.routes import external_api
-from app.modules.internal.routes import internal_api
-from app.modules.oauth.routes import oauth_api
 from app.commands import seed_db
+from app.modules.access.routes.internal import access_internal_api
+from app.modules.applications.routes.internal import applications_internal_api
+from app.modules.auth.routes.external import auth_external_api
+from app.modules.observability.routes.internal import observability_internal_api
+from app.modules.tenants.routes.external import tenants_external_api
+from app.modules.tenants.routes.internal import tenants_internal_api
+from app.modules.users.routes.internal import users_internal_api
 
 
 def create_app() -> OpenAPI:
@@ -88,9 +92,13 @@ def create_app() -> OpenAPI:
 </html>"""
         return Response(html, mimetype="text/html")
 
-    app.register_api(internal_api, url_prefix="/api/internal/v1")
-    app.register_api(external_api, url_prefix="/api/external/v1")
-    app.register_api(oauth_api, url_prefix="/oauth/v1")
+    app.register_api(tenants_internal_api, url_prefix="/api/v1/tenants/internal")
+    app.register_api(tenants_external_api, url_prefix="/api/v1/tenants/external")
+    app.register_api(users_internal_api, url_prefix="/api/v1/users/internal")
+    app.register_api(applications_internal_api, url_prefix="/api/v1/applications/internal")
+    app.register_api(access_internal_api, url_prefix="/api/v1/access/internal")
+    app.register_api(auth_external_api, url_prefix="/api/v1/auth/external")
+    app.register_api(observability_internal_api, url_prefix="/api/v1/observability/internal")
 
     register_error_handlers(app)
     app.cli.add_command(seed_db)

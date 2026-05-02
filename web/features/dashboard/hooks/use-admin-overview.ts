@@ -13,7 +13,7 @@ export function useAdminOverview() {
   const tenantsQuery = useQuery({
     queryKey: ["tenants"],
     queryFn: async () => {
-      const response = await http.get("/api/internal/v1/tenants");
+      const response = await http.get("/api/v1/tenants/internal/");
       return response.data.items as Array<{
         id: string;
         name: string;
@@ -29,7 +29,7 @@ export function useAdminOverview() {
   const usersQuery = useQuery({
     queryKey: ["users", tenantId],
     queryFn: async () => {
-      const response = await http.get("/api/internal/v1/users", {
+      const response = await http.get("/api/v1/users/internal/", {
         params: tenantId ? { tenant_id: tenantId } : undefined,
       });
       return response.data.items as Array<{
@@ -49,7 +49,7 @@ export function useAdminOverview() {
   const appsQuery = useQuery({
     queryKey: ["client-apps", tenantId],
     queryFn: async () => {
-      const response = await http.get("/api/internal/v1/client-apps", {
+      const response = await http.get("/api/v1/applications/internal/", {
         params: tenantId ? { tenant_id: tenantId } : undefined,
       });
       return response.data.items as Array<{ id: string; name: string; status: string; client_id: string }>;
@@ -60,7 +60,7 @@ export function useAdminOverview() {
   const auditQuery = useQuery({
     queryKey: ["audit-logs", tenantId],
     queryFn: async () => {
-      const response = await http.get("/api/internal/v1/audit-logs", {
+      const response = await http.get("/api/v1/observability/internal/audit-logs", {
         params: tenantId ? { tenant_id: tenantId } : undefined,
       });
       return response.data.items as Array<{ id: string; action: string; actor_type: string; status: string; created_at: string }>;
@@ -78,7 +78,7 @@ export function useAdminOverview() {
       if (!tenant) {
         return null;
       }
-      const response = await http.get(`/api/internal/v1/tenants/${tenant.slug}/branding`);
+      const response = await http.get(`/api/v1/tenants/internal/branding/${tenant.slug}`);
       return response.data as {
         tenant_name: string;
         tenant_slug: string;
@@ -99,7 +99,7 @@ export function useAdminOverview() {
   const consentQuery = useQuery({
     queryKey: ["consents", tenantId],
     queryFn: async () => {
-      const response = await http.get("/api/internal/v1/consents", {
+      const response = await http.get("/api/v1/access/internal/consents", {
         params: tenantId ? { tenant_id: tenantId } : undefined,
       });
       return response.data.items as Array<{ id: string; scopes: string[]; revoked_at: string | null }>;
@@ -110,7 +110,7 @@ export function useAdminOverview() {
   const roleBindingsQuery = useQuery({
     queryKey: ["role-bindings", tenantId],
     queryFn: async () => {
-      const response = await http.get("/api/internal/v1/role-bindings", {
+      const response = await http.get("/api/v1/access/internal/role-bindings", {
         params: tenantId ? { tenant_id: tenantId } : undefined,
       });
       return response.data.items as Array<{
@@ -128,7 +128,7 @@ export function useAdminOverview() {
   const telemetryQuery = useQuery({
     queryKey: ["telemetry-summary", tenantId],
     queryFn: async () => {
-      const response = await http.get("/api/internal/v1/telemetry/summary", {
+      const response = await http.get("/api/v1/observability/internal/telemetry/summary", {
         params: tenantId ? { tenant_id: tenantId } : undefined,
       });
       return response.data as {

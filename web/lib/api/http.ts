@@ -24,7 +24,7 @@ let refreshPromise: Promise<SessionState> | null = null;
 async function refreshAdminSession(refreshToken: string): Promise<SessionState> {
   if (!refreshPromise) {
     refreshPromise = axios
-      .post(`${config.apiBaseUrl}/oauth/v1/token`, {
+      .post(`${config.apiBaseUrl}/api/v1/auth/external/token`, {
         grant_type: "refresh_token",
         refresh_token: refreshToken,
       })

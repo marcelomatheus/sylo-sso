@@ -30,7 +30,7 @@ export function ForgotPasswordForm({ tenantSlug }: { tenantSlug: string }) {
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      await http.post("/api/external/v1/password/forgot", {
+      await http.post("/api/v1/auth/external/password/forgot", {
         tenant_slug: tenantSlug,
         email: values.email,
       });
