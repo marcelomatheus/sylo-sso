@@ -73,12 +73,12 @@ export async function createTenant(payload: {
   plan: string;
   lgpd_consent_required: boolean;
 }) {
-  const response = await http.post("/api/internal/v1/tenants", payload);
+  const response = await http.post("/api/v1/tenants/internal/", payload);
   return response.data as TenantRecord;
 }
 
 export async function updateTenant(tenantId: string, payload: Partial<TenantRecord>) {
-  const response = await http.patch(`/api/internal/v1/tenants/${tenantId}`, payload);
+  const response = await http.patch(`/api/v1/tenants/internal/${tenantId}`, payload);
   return response.data as TenantRecord;
 }
 
@@ -90,12 +90,12 @@ export async function createUser(payload: {
   role: string;
   status: string;
 }) {
-  const response = await http.post("/api/internal/v1/users", payload);
+  const response = await http.post("/api/v1/users/internal/", payload);
   return response.data as UserRecord;
 }
 
 export async function updateUser(userId: string, payload: Partial<UserRecord> & { password?: string }) {
-  const response = await http.patch(`/api/internal/v1/users/${userId}`, payload);
+  const response = await http.patch(`/api/v1/users/internal/${userId}`, payload);
   return response.data as UserRecord;
 }
 
@@ -107,17 +107,17 @@ export async function createClientApp(payload: {
   allowed_scopes: string[];
   is_public: boolean;
 }) {
-  const response = await http.post("/api/internal/v1/client-apps", payload);
+  const response = await http.post("/api/v1/applications/internal/", payload);
   return response.data as ClientAppRecord;
 }
 
 export async function updateClientApp(clientAppId: string, payload: Partial<ClientAppRecord>) {
-  const response = await http.patch(`/api/internal/v1/client-apps/${clientAppId}`, payload);
+  const response = await http.patch(`/api/v1/applications/internal/${clientAppId}`, payload);
   return response.data as ClientAppRecord;
 }
 
 export async function listApiKeys(tenantId?: string) {
-  const response = await http.get("/api/internal/v1/api-keys", {
+  const response = await http.get("/api/v1/applications/internal/api-keys", {
     params: tenantId ? { tenant_id: tenantId } : undefined,
   });
   return response.data.items as ApiKeyRecord[];
@@ -129,27 +129,27 @@ export async function createApiKey(payload: {
   name: string;
   scopes: string[];
 }) {
-  const response = await http.post("/api/internal/v1/api-keys", payload);
+  const response = await http.post("/api/v1/applications/internal/api-keys", payload);
   return response.data as ApiKeyRecord;
 }
 
 export async function revokeApiKey(apiKeyId: string) {
-  const response = await http.post(`/api/internal/v1/api-keys/${apiKeyId}/revoke`);
+  const response = await http.post(`/api/v1/applications/internal/api-keys/${apiKeyId}/revoke`);
   return response.data as ApiKeyRecord;
 }
 
 export async function rotateApiKey(apiKeyId: string) {
-  const response = await http.post(`/api/internal/v1/api-keys/${apiKeyId}/rotate`);
+  const response = await http.post(`/api/v1/applications/internal/api-keys/${apiKeyId}/rotate`);
   return response.data as ApiKeyRecord;
 }
 
 export async function revokeConsent(consentId: string) {
-  const response = await http.post(`/api/internal/v1/consents/${consentId}/revoke`);
+  const response = await http.post(`/api/v1/access/internal/consents/${consentId}/revoke`);
   return response.data as { id: string; revoked_at: string | null };
 }
 
 export async function listRoleBindings(tenantId?: string) {
-  const response = await http.get("/api/internal/v1/role-bindings", {
+  const response = await http.get("/api/v1/access/internal/role-bindings", {
     params: tenantId ? { tenant_id: tenantId } : undefined,
   });
   return response.data.items as RoleBindingRecord[];
@@ -163,31 +163,31 @@ export async function createRoleBinding(payload: {
   scopes: string[];
   status: string;
 }) {
-  const response = await http.post("/api/internal/v1/role-bindings", payload);
+  const response = await http.post("/api/v1/access/internal/role-bindings", payload);
   return response.data as RoleBindingRecord;
 }
 
 export async function updateRoleBinding(roleBindingId: string, payload: Partial<RoleBindingRecord>) {
-  const response = await http.patch(`/api/internal/v1/role-bindings/${roleBindingId}`, payload);
+  const response = await http.patch(`/api/v1/access/internal/role-bindings/${roleBindingId}`, payload);
   return response.data as RoleBindingRecord;
 }
 
 export async function setupMfa(method: "EMAIL" | "TOTP" = "EMAIL") {
-  const response = await http.post("/api/internal/v1/me/mfa/setup", { method });
+  const response = await http.post("/api/v1/users/internal/me/mfa/setup", { method });
   return response.data as { secret: string; otpauth_uri: string; already_enabled: boolean; method: "EMAIL" | "TOTP"; delivery?: string };
 }
 
 export async function verifyMfa(code: string) {
-  const response = await http.post("/api/internal/v1/me/mfa/verify", { code });
+  const response = await http.post("/api/v1/users/internal/me/mfa/verify", { code });
   return response.data as { status: string };
 }
 
 export async function disableMfa() {
-  const response = await http.post("/api/internal/v1/me/mfa/disable");
+  const response = await http.post("/api/v1/users/internal/me/mfa/disable");
   return response.data as { status: string };
 }
 
 export async function resendMfa() {
-  const response = await http.post("/api/internal/v1/me/mfa/resend");
+  const response = await http.post("/api/v1/users/internal/me/mfa/resend");
   return response.data as { status: string };
 }

@@ -47,7 +47,7 @@ export function PublicRegistrationForm({ tenantSlug, lgpdRequired }: { tenantSlu
       .map((scope) => scope.trim())
       .filter(Boolean);
     try {
-      const response = await http.post("/api/external/v1/register", {
+      const response = await http.post("/api/v1/auth/external/register", {
         tenant_slug: tenantSlug,
         name: values.name,
         email: values.email,

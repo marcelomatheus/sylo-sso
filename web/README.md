@@ -51,9 +51,9 @@ npm run lint
 ## Integracao esperada
 
 - `NEXT_PUBLIC_API_BASE_URL` deve apontar para a API Flask.
-- O login administrativo usa `/oauth/v1/login`.
-- O painel consome `/api/internal/v1/...`.
-- As paginas white-label consomem `/api/external/v1/...` e o fluxo OAuth.
+- O login administrativo usa `/api/v1/auth/external/login`.
+- O painel consome `/api/v1/...` por dominio.
+- As paginas white-label consomem `/api/v1/tenants/external/...` e `/api/v1/auth/external/...`.
 
 ## Estado do escopo
 

@@ -30,7 +30,7 @@ export function ResendVerificationForm({ tenantSlug }: { tenantSlug: string }) {
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      await http.post("/api/external/v1/email/resend", {
+      await http.post("/api/v1/auth/external/email/resend", {
         tenant_slug: tenantSlug,
         email: values.email,
       });

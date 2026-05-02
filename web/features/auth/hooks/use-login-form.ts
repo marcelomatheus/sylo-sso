@@ -36,7 +36,7 @@ export function useLoginForm() {
 
   const onSubmit = form.handleSubmit(async (values) => {
     try {
-      const response = await http.post("/oauth/v1/login", {
+      const response = await http.post("/api/v1/auth/external/login", {
         tenant_slug: values.tenantSlug,
         email: values.email,
         password: values.password,
