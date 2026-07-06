@@ -6,7 +6,7 @@ O **Sylo SSO** é uma solução SaaS de gestão de identidade e acesso (IAM) de 
 
 ---
 
-## Regras de Negócio e Lógica do Sistema
+## Regras de Negócio e Lógica do Sistema completo
 
 Esta secção detalha as normas operacionais e de segurança que regem o comportamento do Sylo SSO, conforme estabelecido no plano de desenvolvimento.
 
